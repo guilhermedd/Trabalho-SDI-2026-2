@@ -1,0 +1,27 @@
+body {
+  background-color: #f4f6f9;
+}
+
+.card-header {
+  background-color: #fff;
+}
+
+.log-box {
+  max-height: 320px;
+  overflow-y: auto;
+  font-family: SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+}
+
+.log-box .log-ok {
+  color: #198754;
+}
+
+.log-box .log-err {
+  color: #dc3545;
+}
+
+.log-box .log-time {
+  color: #6c757d;
+  margin-right: 0.5rem;
+}
