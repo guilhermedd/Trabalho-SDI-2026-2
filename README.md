@@ -6,6 +6,9 @@ Para a turma 2026/2
 
 Componente **Cadastro** do sistema distribuído. Expõe um painel web para gerar/enviar `NEWUSER_*` e `KILL_*` ao **coordenador**, mantém as listas de usuários e servidores, e recebe comandos de controle (`NEWID_*` / `NEWSERVERIP_*`).
 
+As mensagens que podem ser enviadas ao cadastro são:
+- `NEWCOORDINATORIP_<IP>_<PORT>` ex: `NEWCOORDINATORIP_127.0.0.1_5002`
+- `NEWID_<ID>` ex: `NEWID_1`
 ---
 
 ## Requisitos
@@ -31,3 +34,4 @@ CONTROL_PORT=6001
 HTTP_PORT=8000
 HTTP_HOST=0.0.0.0
 ```
+

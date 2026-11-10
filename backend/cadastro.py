@@ -92,7 +92,7 @@ except LookupError:
 HTTP_HOST = cfg("HTTP_HOST", "0.0.0.0")
 HTTP_PORT = cfg_int("HTTP_PORT", "8000", 1, 65535)
 
-# Endereço em que o Cadastro recebe NEWID / NEWSERVERIP (opcional no .env).
+# Endereço em que o Cadastro recebe NEWID / NEWCOORDINATORIP (opcional no .env).
 CONTROL_HOST = cfg("CONTROL_HOST", "0.0.0.0")
 CONTROL_PORT = cfg_int("CONTROL_PORT", "6001", 1, 65535)
 
@@ -144,7 +144,7 @@ FRONTEND_DIR = find_frontend_dir()
 NEWUSER_RE = re.compile(r"NEWUSER_(\d{1,18})(?:_(.*))?", re.ASCII | re.DOTALL)
 KILL_RE = re.compile(r"KILL_(\d{1,18})", re.ASCII)
 NEWID_RE = re.compile(r"NEWID_(\d{1,18})", re.ASCII)
-NEWSERVERIP_RE = re.compile(r"NEWSERVERIP_([A-Za-z0-9.:\-]+)_(\d{1,5})", re.ASCII)
+NEWCOORDINATORIP_RE = re.compile(r"NEWCOORDINATORIP_([A-Za-z0-9.:\-]+)_(\d{1,5})", re.ASCII)
 
 FIRST_NAMES = [
     "Ana", "Bruno", "Carla", "Diego", "Elisa", "Felipe", "Gabriela", "Henrique",
@@ -364,7 +364,7 @@ def handle_control(line: str, peer: str) -> str:
             print(f"[ok] servidor {server_id} adicionado à lista (NEWID)")
         return f"ACK_NEWID_{server_id}"
 
-    m = NEWSERVERIP_RE.fullmatch(line)
+    m = NEWCOORDINATORIP_RE.fullmatch(line)
     if m:
         ip, port = m.group(1), int(m.group(2))
         if not 0 < port < 65536:
@@ -372,7 +372,7 @@ def handle_control(line: str, peer: str) -> str:
         state.set_coordinator(ip, port)
         log_event("novo_coordenador", ip=ip, porta=port, origem=peer)
         print(f"[ok] novo coordenador: {ip}:{port}")
-        return f"ACK_NEWSERVERIP_{ip}_{port}"
+        return f"ACK_NEWCOORDINATORIP_{ip}_{port}"
 
     log_event("comando_invalido", linha=line, origem=peer)
     return "ERROR_INVALID_COMMAND"
@@ -654,7 +654,7 @@ def main():
     threading.Thread(target=control.serve_forever, daemon=True).start()
 
     print(f"Frontend:            http://localhost:{HTTP_PORT}")
-    print(f"Porta de controle:   {CONTROL_PORT} (NEWID / NEWSERVERIP)")
+    print(f"Porta de controle:   {CONTROL_PORT} (NEWID / NEWCOORDINATORIP)")
     print(f"Coordenador inicial: {SERVER_IP}:{SERVER_PORT} (servidor {INITIAL_SERVER_ID})")
     print(f"Frontend (arquivos): {FRONTEND_DIR}")
     print(f"Log:                 {LOG_FILE.name}")
