@@ -131,7 +131,7 @@ formRandom.addEventListener("submit", async (e) => {
       if (!result.ok && !String(result.error || "").startsWith("ERROR_")) {
         if (i + 1 < qtd) {
           addLog(`Geração interrompida após ${i + 1} de ${qtd} envios`, false,
-                 "Verifique se o Cadastro e o coordenador estão no ar.");
+            "Verifique se o Cadastro e o coordenador estão no ar.");
         }
         break;
       }
@@ -148,7 +148,7 @@ formKill.addEventListener("submit", async (e) => {
   const idInput = document.getElementById("idKill");
   const id = normalizeId(idInput.value);
 
-  const ok = isValidServerId(id); 
+  const ok = isValidServerId(id);
   setInvalid(idInput, !ok);
   if (!ok) return;
 
@@ -171,6 +171,17 @@ document.getElementById("btnKillRandom").addEventListener("click", async () => {
     // O Cadastro sorteia um ID da lista de servidores e envia o KILL.
     const result = await postJSON("/api/kill-random", {});
     addLog(result.sent || "KILL (aleatório)", result.ok, describe(result));
+  } finally {
+    setBusy(formKill, false);
+    refreshStatus();
+  }
+});
+
+document.getElementById("btnKillAll").addEventListener("click", async () => {
+  setBusy(formKill, true);
+  try {
+    const result = await postJSON("/api/kill-all", {});
+    addLog(result.sent || "KILL (todos)", result.ok, describe(result));
   } finally {
     setBusy(formKill, false);
     refreshStatus();

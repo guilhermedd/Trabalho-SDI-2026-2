@@ -568,7 +568,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         path = self.path.split("?", 1)[0]
-        if path not in ("/api/message", "/api/random", "/api/kill-random", "/api/auto"):
+        if path not in ("/api/message", "/api/random", "/api/kill-random", "/api/kill-all", "/api/auto"):
             self._json(404, {"ok": False, "error": "Rota não encontrada"})
             return
         try:
@@ -604,6 +604,29 @@ class Handler(BaseHTTPRequestHandler):
                 return
             ok, sent, info = dispatch(f"KILL_{random.choice(server_ids)}")
             self._send_result(ok, sent, info)
+            return
+
+        if path == "/api/kill-all":
+            # itera sobre os servers conhecidos enviando um KILL_<ID> para cada 
+            # mata replicas primeiro e o coordenador por ultimo
+            with state.lock:
+                server_ids = sorted(state.server_ids)
+                coord_host, coord_port = state.coordinator
+            if not server_ids:
+                self._json(409, {"ok": False, "error": "Nenhum servidor na lista para matar"})
+                return
+
+            coord_id = coord_port - SERVER_PORT
+            order = [sid for sid in server_ids if sid != coord_id]
+            if coord_id in server_ids:
+                order.append(coord_id)
+
+            last_ok = True
+            last_info = ""
+            for sid in order:
+                last_ok, _, last_info = dispatch(f"KILL_{sid}")
+
+            self._send_result(last_ok, f"KILL de {len(order)} servidor(es)", last_info)
             return
 
         action = body.get("action")

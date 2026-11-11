@@ -73,11 +73,12 @@
                      class="form-control" id="idKill" placeholder="Ex: 0" required>
               <div class="invalid-feedback">Informe um ID de servidor numérico (0 ou maior).</div>
             </div>
-            <div class="d-flex gap-2">
+            <div class="d-flex gap-2 flex-wrap">
               <button type="submit" class="btn btn-danger flex-fill">Enviar KILL</button>
               <button type="button" class="btn btn-outline-danger flex-fill" id="btnKillRandom">Matar aleatório</button>
+              <button type="button" class="btn btn-outline-danger flex-fill" id="btnKillAll">Matar todos</button>
             </div>
-            <div class="form-text">"Matar aleatório" sorteia um dos servidores da lista.</div>
+            <div class="form-text">"Matar aleatório" sorteia um servidor. "Matar todos" envia KILL para cada servidor da lista.</div>
           </form>
         </div>
       </div>
